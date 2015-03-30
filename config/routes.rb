@@ -87,6 +87,7 @@ Rails.application.routes.draw do
   # AuthorsController
   match '/author/:id(.:format)', :to => 'authors#show', :format => /rss|atom/, :as => 'xml'
   match '/author(/:id)', :to => 'authors#show', :format => false
+  match '/admin/content'
 
   # ThemesController
   scope :controller => 'theme', :filename => /.*/ do

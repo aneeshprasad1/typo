@@ -86,6 +86,7 @@ class Article < Content
       comment.save
     end
     article.save
+    other_article.destroy
     return article
   end
 
