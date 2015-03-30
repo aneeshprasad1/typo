@@ -76,6 +76,19 @@ class Article < Content
     self.permalink = self.title.to_permalink if self.permalink.nil? or self.permalink.empty?
   end
 
+  def merge(article_id, other_article_id)
+    article = Article.find(article_id)
+    other_article = Article.find(other_article_id)
+    article_body_and_extended = article.body_and_extended + other_article.body_and_extended
+
+    Comment.where(:article_id => other_article_id).each do |comment|
+      comment.article_id = article_id
+      comment.save
+    end
+    article.save
+    return article
+  end
+
   def has_child?
     Article.exists?({:parent_id => self.id})
   end
@@ -104,10 +117,10 @@ class Article < Content
     end
 
     def search_with_pagination(search_hash, paginate_hash)
-      
+
       state = (search_hash[:state] and ["no_draft", "drafts", "published", "withdrawn", "pending"].include? search_hash[:state]) ? search_hash[:state] : 'no_draft'
-      
-      
+
+
       list_function  = ["Article.#{state}"] + function_search_no_draft(search_hash)
 
       if search_hash[:category] and search_hash[:category].to_i > 0
